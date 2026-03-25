@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { applicationsAPI } from '../utils/api';
+import { applicationsAPI, cvAPI, API_BASE_URL } from '../utils/api';
 import { format, parseISO } from 'date-fns';
 import { toZonedTime, format as formatTz } from 'date-fns-tz';
 import { useAuth } from '../contexts/AuthContext';
@@ -227,54 +227,44 @@ export default function History() {
                   {/* Resume Downloads */}
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-gray-500 w-16">Resume:</span>
-                    {app.cvDocUrl && (
-                      <a
-                        href={app.cvDocUrl}
-                        download={`${sanitizeFilename(user?.full_name || 'Resume')}_Resume.docx`}
-                        className="btn btn-secondary py-1 px-2 text-xs"
-                        title="Download Resume DOCX"
-                      >
-                        DOCX
-                      </a>
-                    )}
-                    {app.cvPdfUrl && (
-                      <a
-                        href={app.cvPdfUrl}
-                        download={`${sanitizeFilename(user?.full_name || 'Resume')}_Resume.pdf`}
-                        className="btn btn-secondary py-1 px-2 text-xs"
-                        title="Download Resume PDF"
-                      >
-                        PDF
-                      </a>
-                    )}
+                    <a
+                      href={cvAPI.downloadDocUrl(app.id)}
+                      download={`${sanitizeFilename(user?.full_name || 'Resume')}_Resume.docx`}
+                      className="btn btn-secondary py-1 px-2 text-xs"
+                      title="Download Resume DOCX"
+                    >
+                      DOCX
+                    </a>
+                    <a
+                      href={cvAPI.downloadPdfUrl(app.id)}
+                      download={`${sanitizeFilename(user?.full_name || 'Resume')}_Resume.pdf`}
+                      className="btn btn-secondary py-1 px-2 text-xs"
+                      title="Download Resume PDF"
+                    >
+                      PDF
+                    </a>
                   </div>
                   
                   {/* Cover Letter Downloads */}
-                  {(app.coverLetterDocUrl || app.coverLetterPdfUrl) && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-500 w-16">Cover:</span>
-                      {app.coverLetterDocUrl && (
-                        <a
-                          href={app.coverLetterDocUrl}
-                          download={`${sanitizeFilename(user?.full_name || 'Cover_Letter')}_Cover_Letter.docx`}
-                          className="btn btn-secondary py-1 px-2 text-xs"
-                          title="Download Cover Letter DOCX"
-                        >
-                          DOCX
-                        </a>
-                      )}
-                      {app.coverLetterPdfUrl && (
-                        <a
-                          href={app.coverLetterPdfUrl}
-                          download={`${sanitizeFilename(user?.full_name || 'Cover_Letter')}_Cover_Letter.pdf`}
-                          className="btn btn-secondary py-1 px-2 text-xs"
-                          title="Download Cover Letter PDF"
-                        >
-                          PDF
-                        </a>
-                      )}
-                    </div>
-                  )}
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-500 w-16">Cover:</span>
+                    <a
+                      href={cvAPI.downloadCoverLetterDocUrl(app.id)}
+                      download={`${sanitizeFilename(user?.full_name || 'Cover_Letter')}_Cover_Letter.docx`}
+                      className="btn btn-secondary py-1 px-2 text-xs"
+                      title="Download Cover Letter DOCX"
+                    >
+                      DOCX
+                    </a>
+                    <a
+                      href={cvAPI.downloadCoverLetterPdfUrl(app.id)}
+                      download={`${sanitizeFilename(user?.full_name || 'Cover_Letter')}_Cover_Letter.pdf`}
+                      className="btn btn-secondary py-1 px-2 text-xs"
+                      title="Download Cover Letter PDF"
+                    >
+                      PDF
+                    </a>
+                  </div>
                   
                   {/* Delete Button */}
                   <button
