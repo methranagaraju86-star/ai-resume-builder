@@ -237,11 +237,13 @@ export default function History() {
         </div>
       ) : (applications && applications.length > 0) ? (
         <div className="space-y-4">
-          {applications.map(app => (
-            <div key={app.id} className="card p-6 hover:shadow-md transition-shadow">
-              <div className="flex items-start justify-between">
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center shrink-0">
+          {applications.map((app, index) => {
+            console.log(`Rendering index ${index}:`, JSON.stringify(app, null, 2));
+            return (
+              <div key={app.id || `app-${index}`} className="card p-6 hover:shadow-md transition-shadow">
+                <div className="flex items-start justify-between">
+                  <div className="flex gap-4">
+                    <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center shrink-0">
                     <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
@@ -356,8 +358,8 @@ export default function History() {
                   </button>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {/* Pagination */}
           {pagination.totalPages > 1 && (
