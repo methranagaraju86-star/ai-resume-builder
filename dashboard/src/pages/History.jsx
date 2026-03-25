@@ -9,6 +9,7 @@ const sanitizeFilename = (name) => name.replace(/[^a-zA-Z0-9\s]/g, '').replace(/
 
 // Download helper function that includes auth token
 const downloadFile = async (url, filename) => {
+  console.log('Download called with URL:', url, 'filename:', filename);
   try {
     // Validate URL
     if (!url || url.includes('undefined') || url.includes(':path') || url.endsWith('/')) {
@@ -16,6 +17,8 @@ const downloadFile = async (url, filename) => {
       alert('Download not available. Please refresh the page.');
       return;
     }
+    
+    console.log('Making fetch request to:', url);
     
     const token = localStorage.getItem('authToken');
     if (!token) {
@@ -59,6 +62,14 @@ export default function History() {
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
   const [searchQuery, setSearchQuery] = useState('');
   const [userTimezone, setUserTimezone] = useState('UTC');
+
+  // Debug: log applications when they change
+  useEffect(() => {
+    console.log('Applications updated:', applications);
+    applications.forEach(app => {
+      console.log(`App ${app.id}: jobTitle="${app.jobTitle}", companyName="${app.companyName}"`);
+    });
+  }, [applications]);
 
   useEffect(() => {
     fetchApplications();
