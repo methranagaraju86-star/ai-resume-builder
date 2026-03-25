@@ -39,18 +39,22 @@ export default function History() {
       }
 
       const response = await applicationsAPI.getAll(params);
-      setApplications(response.data.applications);
+      
+      // Safely handle response data
+      const apps = response.data?.applications || [];
+      setApplications(Array.isArray(apps) ? apps : []);
       setPagination(prev => ({
         ...prev,
-        total: response.data.pagination.total,
-        totalPages: response.data.pagination.totalPages
+        total: response.data?.pagination?.total || 0,
+        totalPages: response.data?.pagination?.totalPages || 1
       }));
       // Set user timezone from response
-      if (response.data.userTimezone) {
+      if (response.data?.userTimezone) {
         setUserTimezone(response.data.userTimezone);
       }
     } catch (error) {
       console.error('Failed to fetch applications:', error);
+      setApplications([]);
     } finally {
       setLoading(false);
     }
@@ -168,7 +172,7 @@ export default function History() {
 
       {/* Stats Summary */}
       <div className="flex items-center justify-between text-sm text-gray-500">
-        <span>Showing {applications.length} of {pagination.total} applications</span>
+        <span>Showing {applications?.length || 0} of {pagination?.total || 0} applications</span>
         <span className="text-xs">Timezone: {userTimezone}</span>
       </div>
 
@@ -177,7 +181,7 @@ export default function History() {
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
         </div>
-      ) : applications.length > 0 ? (
+      ) : (applications && applications.length > 0) ? (
         <div className="space-y-4">
           {applications.map(app => (
             <div key={app.id} className="card p-6 hover:shadow-md transition-shadow">
