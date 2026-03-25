@@ -282,14 +282,28 @@ export default function History() {
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-gray-500 w-16">Resume:</span>
                     <button
-                      onClick={() => downloadFile(cvAPI.downloadDocUrl(app.id), `${sanitizeFilename(user?.full_name || 'Resume')}_Resume.docx`)}
+                      onClick={() => {
+                        console.log('DOCX button clicked, app.id:', app.id, 'app:', app);
+                        if (!app.id) {
+                          alert('Application ID is missing. Please refresh the page.');
+                          return;
+                        }
+                        downloadFile(cvAPI.downloadDocUrl(app.id), `${sanitizeFilename(user?.full_name || 'Resume')}_Resume.docx`);
+                      }}
                       className="btn btn-secondary py-1 px-2 text-xs"
                       title="Download Resume DOCX"
                     >
                       DOCX
                     </button>
                     <button
-                      onClick={() => downloadFile(cvAPI.downloadPdfUrl(app.id), `${sanitizeFilename(user?.full_name || 'Resume')}_Resume.pdf`)}
+                      onClick={() => {
+                        console.log('PDF button clicked, app.id:', app.id);
+                        if (!app.id) {
+                          alert('Application ID is missing. Please refresh the page.');
+                          return;
+                        }
+                        downloadFile(cvAPI.downloadPdfUrl(app.id), `${sanitizeFilename(user?.full_name || 'Resume')}_Resume.pdf`);
+                      }}
                       className="btn btn-secondary py-1 px-2 text-xs"
                       title="Download Resume PDF"
                     >
@@ -301,14 +315,28 @@ export default function History() {
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-gray-500 w-16">Cover:</span>
                     <button
-                      onClick={() => downloadFile(cvAPI.downloadCoverLetterDocUrl(app.id), `${sanitizeFilename(user?.full_name || 'Cover_Letter')}_Cover_Letter.docx`)}
+                      onClick={() => {
+                        console.log('Cover DOCX button clicked, app.id:', app.id);
+                        if (!app.id) {
+                          alert('Application ID is missing. Please refresh the page.');
+                          return;
+                        }
+                        downloadFile(cvAPI.downloadCoverLetterDocUrl(app.id), `${sanitizeFilename(user?.full_name || 'Cover_Letter')}_Cover_Letter.docx`);
+                      }}
                       className="btn btn-secondary py-1 px-2 text-xs"
                       title="Download Cover Letter DOCX"
                     >
                       DOCX
                     </button>
                     <button
-                      onClick={() => downloadFile(cvAPI.downloadCoverLetterPdfUrl(app.id), `${sanitizeFilename(user?.full_name || 'Cover_Letter')}_Cover_Letter.pdf`)}
+                      onClick={() => {
+                        console.log('Cover PDF button clicked, app.id:', app.id);
+                        if (!app.id) {
+                          alert('Application ID is missing. Please refresh the page.');
+                          return;
+                        }
+                        downloadFile(cvAPI.downloadCoverLetterPdfUrl(app.id), `${sanitizeFilename(user?.full_name || 'Cover_Letter')}_Cover_Letter.pdf`);
+                      }}
                       className="btn btn-secondary py-1 px-2 text-xs"
                       title="Download Cover Letter PDF"
                     >
