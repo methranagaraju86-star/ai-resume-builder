@@ -9,16 +9,12 @@ const sanitizeFilename = (name) => name.replace(/[^a-zA-Z0-9\s]/g, '').replace(/
 
 // Download helper function that includes auth token
 const downloadFile = async (url, filename) => {
-  console.log('Download called with URL:', url, 'filename:', filename);
   try {
     // Validate URL
-    if (!url || url.includes('undefined') || url.includes(':path') || url.endsWith('/')) {
-      console.error('Invalid download URL:', url);
+    if (!url || url.includes('undefined')) {
       alert('Download not available. Please refresh the page.');
       return;
     }
-    
-    console.log('Making fetch request to:', url);
     
     const token = localStorage.getItem('authToken');
     if (!token) {
@@ -33,8 +29,6 @@ const downloadFile = async (url, filename) => {
     });
     
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Download failed:', response.status, errorText);
       throw new Error(`Download failed: ${response.status}`);
     }
     
@@ -48,7 +42,6 @@ const downloadFile = async (url, filename) => {
     window.URL.revokeObjectURL(downloadUrl);
     document.body.removeChild(a);
   } catch (error) {
-    console.error('Download error:', error);
     alert('Failed to download file. Please try again.');
   }
 };
@@ -62,14 +55,6 @@ export default function History() {
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
   const [searchQuery, setSearchQuery] = useState('');
   const [userTimezone, setUserTimezone] = useState('UTC');
-
-  // Debug: log applications when they change
-  useEffect(() => {
-    console.log('Applications updated:', applications);
-    applications.forEach(app => {
-      console.log(`App ${app.id}: jobTitle="${app.jobTitle}", companyName="${app.companyName}"`);
-    });
-  }, [applications]);
 
   useEffect(() => {
     fetchApplications();
@@ -237,13 +222,11 @@ export default function History() {
         </div>
       ) : (applications && applications.length > 0) ? (
         <div className="space-y-4">
-          {applications.map((app, index) => {
-            console.log(`Rendering index ${index}:`, JSON.stringify(app, null, 2));
-            return (
-              <div key={app.id || `app-${index}`} className="card p-6 hover:shadow-md transition-shadow">
-                <div className="flex items-start justify-between">
-                  <div className="flex gap-4">
-                    <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center shrink-0">
+          {applications.map(app => (
+            <div key={app.id} className="card p-6 hover:shadow-md transition-shadow">
+              <div className="flex items-start justify-between">
+                <div className="flex gap-4">
+                  <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center shrink-0">
                     <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
@@ -284,28 +267,14 @@ export default function History() {
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-gray-500 w-16">Resume:</span>
                     <button
-                      onClick={() => {
-                        console.log('DOCX button clicked, app.id:', app.id, 'app:', app);
-                        if (!app.id) {
-                          alert('Application ID is missing. Please refresh the page.');
-                          return;
-                        }
-                        downloadFile(cvAPI.downloadDocUrl(app.id), `${sanitizeFilename(user?.full_name || 'Resume')}_Resume.docx`);
-                      }}
+                      onClick={() => downloadFile(cvAPI.downloadDocUrl(app.id), `${sanitizeFilename(user?.full_name || 'Resume')}_Resume.docx`)}
                       className="btn btn-secondary py-1 px-2 text-xs"
                       title="Download Resume DOCX"
                     >
                       DOCX
                     </button>
                     <button
-                      onClick={() => {
-                        console.log('PDF button clicked, app.id:', app.id);
-                        if (!app.id) {
-                          alert('Application ID is missing. Please refresh the page.');
-                          return;
-                        }
-                        downloadFile(cvAPI.downloadPdfUrl(app.id), `${sanitizeFilename(user?.full_name || 'Resume')}_Resume.pdf`);
-                      }}
+                      onClick={() => downloadFile(cvAPI.downloadPdfUrl(app.id), `${sanitizeFilename(user?.full_name || 'Resume')}_Resume.pdf`)}
                       className="btn btn-secondary py-1 px-2 text-xs"
                       title="Download Resume PDF"
                     >
@@ -317,28 +286,14 @@ export default function History() {
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-gray-500 w-16">Cover:</span>
                     <button
-                      onClick={() => {
-                        console.log('Cover DOCX button clicked, app.id:', app.id);
-                        if (!app.id) {
-                          alert('Application ID is missing. Please refresh the page.');
-                          return;
-                        }
-                        downloadFile(cvAPI.downloadCoverLetterDocUrl(app.id), `${sanitizeFilename(user?.full_name || 'Cover_Letter')}_Cover_Letter.docx`);
-                      }}
+                      onClick={() => downloadFile(cvAPI.downloadCoverLetterDocUrl(app.id), `${sanitizeFilename(user?.full_name || 'Cover_Letter')}_Cover_Letter.docx`)}
                       className="btn btn-secondary py-1 px-2 text-xs"
                       title="Download Cover Letter DOCX"
                     >
                       DOCX
                     </button>
                     <button
-                      onClick={() => {
-                        console.log('Cover PDF button clicked, app.id:', app.id);
-                        if (!app.id) {
-                          alert('Application ID is missing. Please refresh the page.');
-                          return;
-                        }
-                        downloadFile(cvAPI.downloadCoverLetterPdfUrl(app.id), `${sanitizeFilename(user?.full_name || 'Cover_Letter')}_Cover_Letter.pdf`);
-                      }}
+                      onClick={() => downloadFile(cvAPI.downloadCoverLetterPdfUrl(app.id), `${sanitizeFilename(user?.full_name || 'Cover_Letter')}_Cover_Letter.pdf`)}
                       className="btn btn-secondary py-1 px-2 text-xs"
                       title="Download Cover Letter PDF"
                     >
@@ -358,8 +313,8 @@ export default function History() {
                   </button>
                 </div>
               </div>
-            );
-          })}
+            ))}
+        </div>
 
           {/* Pagination */}
           {pagination.totalPages > 1 && (
