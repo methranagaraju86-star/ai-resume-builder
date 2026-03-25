@@ -267,7 +267,12 @@ export default function History() {
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-gray-500 w-16">Resume:</span>
                     <button
-                      onClick={() => downloadFile(cvAPI.downloadDocUrl(app.id), `${sanitizeFilename(user?.full_name || 'Resume')}_Resume.docx`)}
+                      onClick={async () => {
+                        const url = cvAPI.downloadDocUrl(app.id);
+                        const filename = `${sanitizeFilename(user?.full_name || 'Resume')}_Resume.docx`;
+                        alert(`app.id = ${app.id}, url = ${url}`);
+                        await downloadFile(url, filename);
+                      }}
                       className="btn btn-secondary py-1 px-2 text-xs"
                       title="Download Resume DOCX"
                     >
