@@ -245,13 +245,22 @@ router.post('/preview', authMiddleware, async (req, res) => {
 
     let employmentHistory;
     if (process.env.DATABASE_URL) {
+      // PostgreSQL: Sort by end_date descending, with "Present" first
+      // NULLS LAST ensures jobs without end_date (current jobs) come first
       employmentHistory = await db.getAll(
-        `SELECT * FROM employment_history WHERE user_id = $1 ORDER BY start_date DESC`,
+        `SELECT * FROM employment_history WHERE user_id = $1 
+         ORDER BY CASE WHEN end_date IS NULL OR end_date = 'Present' THEN 0 ELSE 1 END,
+                  CASE WHEN end_date = 'Present' THEN 1 ELSE 0 END DESC,
+                  end_date DESC`,
         [req.user.id]
       );
     } else {
+      // SQLite: Sort by end_date descending, with "Present" first
       employmentHistory = await db.getAll(
-        `SELECT * FROM employment_history WHERE user_id = ? ORDER BY start_date DESC`,
+        `SELECT * FROM employment_history WHERE user_id = ? 
+         ORDER BY CASE WHEN end_date IS NULL OR end_date = 'Present' THEN 0 ELSE 1 END,
+                  CASE WHEN end_date = 'Present' THEN 1 ELSE 0 END DESC,
+                  end_date DESC`,
         [req.user.id]
       );
     }
