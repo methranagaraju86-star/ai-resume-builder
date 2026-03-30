@@ -246,6 +246,8 @@ router.get('/', authMiddleware, async (req, res) => {
 // Get application statistics
 router.get('/stats', authMiddleware, async (req, res) => {
   try {
+    console.log('Stats endpoint called, isPostgres:', isPostgres);
+    
     const stats = await getAllCompat(
       `SELECT
         COUNT(*) as total,
@@ -261,6 +263,8 @@ router.get('/stats', authMiddleware, async (req, res) => {
        FROM applications WHERE user_id = $1`,
       [req.user.id]
     );
+    
+    console.log('Stats result:', stats);
 
     const byCompany = await getAllCompat(
       `SELECT company_name, COUNT(*) as count
@@ -277,6 +281,8 @@ router.get('/stats', authMiddleware, async (req, res) => {
        LIMIT 10`,
       [req.user.id]
     );
+    
+    console.log('ByCompany result:', byCompany);
 
     const timeline = await getAllCompat(
       `SELECT DATE(applied_at) as date, COUNT(*) as count
@@ -291,12 +297,16 @@ router.get('/stats', authMiddleware, async (req, res) => {
        ORDER BY date`,
       [req.user.id]
     );
+    
+    console.log('Timeline result:', timeline);
 
-    res.json({
+    const result = {
       stats: stats[0] || { total: 0, today: 0, thisWeek: 0, thisMonth: 0 },
       byCompany,
       timeline
-    });
+    };
+    console.log('Sending response:', result);
+    res.json(result);
   } catch (error) {
     console.error('Stats fetch error:', error);
     res.status(500).json({ error: 'Failed to fetch statistics', details: error.message });
